@@ -41,5 +41,5 @@ When I have some more free time, I will further develop this plugin.
 
 ### Next Features
 
-1. Automatically change the icon of each macro in the layout view --> If you know how this can be achieved via the commandline, please let me know by adding an issue.
+1. Automatically change the icon of each macro in the layout view --> If you know how this can be achieved via the commandline, please let me know by adding an Pull Request.
 2. Making sure it works with different colors.
