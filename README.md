@@ -1,6 +1,6 @@
 # grandma2_colorpicker_plugin
 
-A LUA plugin to automaticly create a color picker layout view.
+A LUA plugin to automatically create a color picker layout view.
 
 ## Configuration
 In the ColorPicker.lua file, you will find the config section at the top.
@@ -41,5 +41,5 @@ When I have some more free time, I will further develop this plugin.
 
 ### Next Features
 
-1. Automaticly change the icon of each macro in the layout view --> If you know how this can be achieved via the commandline, please let me know by adding an issue.
+1. Automatically change the icon of each macro in the layout view --> If you know how this can be achieved via the commandline, please let me know by adding an issue.
 2. Making sure it works with different colors.
