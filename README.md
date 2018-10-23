@@ -1,5 +1,5 @@
 # grandma2_colorpicker_plugin
-=============================
+
 A LUA plugin to automaticly create a color picker layout view.
 
 ## Configuration
@@ -24,19 +24,16 @@ The order of these images is the same as the colors. Please read below to find o
 
 `unfilledImages` contains the array of image pool numbers with all the unfilled images. 
 
----
 
 ## Colors
 
 The colors are in the following order:
 White, Red, Orange, Yellow, Green, Seagreen, Cyan, Blue, Lavender, Violet, Magenta, Pink.
 
----
 
 ## Images 
 The images folder contains all the images you can use in this plugin.
 
----
 
 ## Further development
 
