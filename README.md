@@ -1,6 +1,12 @@
 # grandma2_colorpicker_plugin
 
 A LUA plugin to automatically create a color picker layout view.
+I also added a function to create High and Low FX presets for use in a effect engine.
+This is the plugin called HighLowFX.lua.
+
+###Be sure to first run the colorpicker and then the HighLowFX plugin! 
+I have not tested it the otherway around.  
+But I will try to merge the two plugins before the start of 2019
 
 ## Configuration
 In the ColorPicker.lua file, you will find the config section at the top.
@@ -37,9 +43,10 @@ The images folder contains all the images you can use in this plugin.
 
 ## Further development
 
-When I have some more free time, I will further develop this plugin.
+Because I am a very busy high school student I haven't got much time to develop this plugin. I will put in time when I can! 
 
 ### Next Features
 
-1. Automatically change the icon of each macro in the layout view --> If you know how this can be achieved via the commandline, please let me know by adding an Pull Request.
+1. Automatically change the icon of each macro in the layout view --> This is impossible because MA lighting does not support this.
 2. Making sure it works with different colors.
+3. An overall code cleanup
