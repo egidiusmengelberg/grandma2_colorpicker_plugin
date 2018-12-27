@@ -2,7 +2,7 @@
 Plugin written by: Egidius Mengelberg
 
 This plugin is based on a plugin originally written by Jason Giaffo.
-It is heavily modified to be used as an color picker plugin. (Like Christian Jackson uses)
+It is heavily modified to be used as a color picker plugin. (Like Christian Jackson uses)
 
 --]]
 
