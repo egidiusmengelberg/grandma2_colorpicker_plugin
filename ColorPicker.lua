@@ -10,14 +10,14 @@ It is heavily modified to be used as an color picker plugin. (Like Christian Jac
 --Configuration
 
 --Numbers of Groups you want to use
-local grpNum = {1,2,3,4}
+local grpNum = {1,2,3,4,5,6}
 
 local macStart = 1001
 local seqStart = 1001
 local startingPg = 500
 local startingFader = 101
 --layout view config
-local layoutView = 2
+local layoutView = 1
 local spacing = 0.1
 --image config
 local imgStart = 352
@@ -32,18 +32,18 @@ local unfilledImages = {320,321,322,323,324,325,326,327,328,329,330,331}
 
 --Do not change the following settings unless you know what you're doing.
 --This plugin is designed to use the following colors:
-	--White,
-	--Red,
-	--Orange,
-	--Yellow,
-	--Green,
-	--Sea Green,
-	--Cyan,
-	--Lavender,
-	--Blue,
-	--Violet,
-	--Magenta,
-	--Pink
+    --White,
+    --Red,
+    --Orange,
+    --Yellow,
+    --Green,
+    --Sea Green,
+    --Cyan,
+    --Lavender,
+    --Blue,
+    --Violet,
+    --Magenta,
+    --Pink
 
 --Numbers of Color Pool Items
 local pNum = {1,2,3,4,5,6,7,8,9,10,11,12}
@@ -240,7 +240,7 @@ gma.feedback('Starting to add items to preset list')
 
 -- getting the names of colors based on the pool number
 for p = 1, #pNum do
-	pName[p] = getLabel('Preset 4.'..pNum[p])
+    pName[p] = getLabel('Preset 4.'..pNum[p])
   if (not pName[p]) then pName[p] = 'Color '..pNum[p] end
 end
 
@@ -283,21 +283,21 @@ local imageGrid = {}
 local allImageGrid = {}
 
 for i = 1, #grpNum do
-	for j = 1, #pNum do
-		if j == 1 then
-			imageGrid[i] = {}
-		end
-		imageGrid[i][j] = imgStart
-		imgStart = imgStart + 1
-		cmd('Copy Image '..unfilledImages[j]..' At '..imageGrid[i][j]..' /m')
-	end
-	imgStart = imgStart + 4
+    for j = 1, #pNum do
+        if j == 1 then
+            imageGrid[i] = {}
+        end
+        imageGrid[i][j] = imgStart
+        imgStart = imgStart + 1
+        cmd('Copy Image '..unfilledImages[j]..' At '..imageGrid[i][j]..' /m')
+    end
+    imgStart = imgStart + 4
 end
 
 for i = 1, #pNum do
-	allImageGrid[i] = allImgStart
-	allImgStart = allImgStart + 1
-	cmd('Copy Image '..unfilledImages[i]..' At '..allImageGrid[i]..' /m')
+    allImageGrid[i] = allImgStart
+    allImgStart = allImgStart + 1
+    cmd('Copy Image '..unfilledImages[i]..' At '..allImageGrid[i]..' /m')
 end
 
 
@@ -329,45 +329,45 @@ for g = 1, #grpNum do
   local execCurrent = tostring(startingPg..'.'..faderCurrent)
   
   for p = 1, #pNum do
-  	--create commands for image support
-  	imageCommand = 'Copy Image '..unfilledImages[1]..' Thru '..unfilledImages[#pNum]..' At '..imageGrid[g][1]..' /m; Copy Image '..filledImages[p]..' At '..imageGrid[g][p]..' /m'
+      --create commands for image support
+      imageCommand = 'Copy Image '..unfilledImages[1]..' Thru '..unfilledImages[#pNum]..' At '..imageGrid[g][1]..' /m; Copy Image '..filledImages[p]..' At '..imageGrid[g][p]..' /m'
     --create cue with color preset
     cmd('Group '..grpNum[g]..' At Preset 4.'..pNum[p]) --group at preset
-  	cmd('Store Sequence '..seqCurrent..' Cue '..p..str_storeOpt) --store to sequence and cue
-  	cmd('Assign Sequence '..seqCurrent..' Cue '..p..' /cmd = \"'..imageCommand..'\"')
+      cmd('Store Sequence '..seqCurrent..' Cue '..p..str_storeOpt) --store to sequence and cue
+      cmd('Assign Sequence '..seqCurrent..' Cue '..p..' /cmd = \"'..imageCommand..'\"')
 
-  	--if it is the first cue, assign it to an executor
-		if p == 1 then
-		cmd('Assign Sequence '..seqCurrent..' At Executor '..execCurrent) --assign sequence to executor
-		end 
+      --if it is the first cue, assign it to an executor
+        if p == 1 then
+        cmd('Assign Sequence '..seqCurrent..' At Executor '..execCurrent) --assign sequence to executor
+        end 
 
-		--label the sequence and cues
-	  cmd('Label Sequence '..seqCurrent..' \"'..grpName[g]..' color\"'); 
-	  cmd('Label Sequence '..seqCurrent..' Cue '..p..' \"'..grpName[g]..' '..pName[p]..'\"');  
+        --label the sequence and cues
+      cmd('Label Sequence '..seqCurrent..' \"'..grpName[g]..' color\"'); 
+      cmd('Label Sequence '..seqCurrent..' Cue '..p..' \"'..grpName[g]..' '..pName[p]..'\"');  
 
-	  --create macro and label it
-	  macStore(macCurrent, grpName[g]..' '..pName[p]) 
-	  macLine(macCurrent, 1, 'Goto Executor '..execCurrent..' Cue '..p)
-	  macLine(macCurrent, 2, 'Off Macro '..macGroup.start..' Thru '..macGroup.final..' - '..macCurrent)
+      --create macro and label it
+      macStore(macCurrent, grpName[g]..' '..pName[p]) 
+      macLine(macCurrent, 1, 'Goto Executor '..execCurrent..' Cue '..p)
+      macLine(macCurrent, 2, 'Off Macro '..macGroup.start..' Thru '..macGroup.final..' - '..macCurrent)
 
-	  
-	  --change the appearance of the macro
-	  cmd('Appearance Macro '..macCurrent..' /color='..'"'..colSwatchBook[p]..'"')
-	  
-	  --clear your programmer
-	  cmd('ClearAll'); 
+      
+      --change the appearance of the macro
+      cmd('Appearance Macro '..macCurrent..' /color='..'"'..colSwatchBook[p]..'"')
+      
+      --clear your programmer
+      cmd('ClearAll'); 
 
-	  --calculate positions for layout pool
-	  posX = (p + 0.5) * (1 + spacing)
-	  posY = (g + 0.5) * (1 + spacing)
+      --calculate positions for layout pool
+      posX = (p + 0.5) * (1 + spacing)
+      posY = (g + 0.5) * (1 + spacing)
 
-	  --add macro to layout pool
-	  cmd('Assign Macro '..macCurrent..' At Layout '..layoutView..'/x='..posX..' /y='..posY) 
-	  
-	  --increment macro counter
-	  macCurrent = macCurrent + 1
-	  --To use less processing power
-	  gma.sleep(0.05)
+      --add macro to layout pool
+      cmd('Assign Macro '..macCurrent..' At Layout '..layoutView..'/x='..posX..' /y='..posY) 
+      
+      --increment macro counter
+      macCurrent = macCurrent + 1
+      --To use less processing power
+      gma.sleep(0.05)
   end  
   --move to next sequence and fader number
   seqCurrent  = seqCurrent + 1 
@@ -395,7 +395,7 @@ for p = 1, #pNum do
     for p = 1, (#grpNum-1) do
       index = index + #pNum
       t = t..' + '..(macStart + index)
-  	end
+      end
   end
   
   cmd('Assign Macro 1.'..macCurrent..'.1 /cmd = \"'..t..'\"')
@@ -403,16 +403,16 @@ for p = 1, #pNum do
   cmd('Assign Macro 1.'..macCurrent..'.3 /cmd = \"Copy Image '..filledImages[p]..' At '..allImageGrid[p]..' /m\"')
 
   -- change the appearance of the macro
-	cmd('Appearance Macro '..macCurrent..' /color='..'"'..colSwatchBook[p]..'"')
+    cmd('Appearance Macro '..macCurrent..' /color='..'"'..colSwatchBook[p]..'"')
 
   --edit positions for layout pool
-	posX = (p + 0.5) * (1 + spacing)
-	posY = (#grpNum + 1.5) * (1 + spacing)
+    posX = (p + 0.5) * (1 + spacing)
+    posY = (#grpNum + 1.5) * (1 + spacing)
 
-	--add macro to layout pool
-	cmd('Assign Macro '..macCurrent..' At Layout '..layoutView..'/x='..posX..' /y='..posY) 
+    --add macro to layout pool
+    cmd('Assign Macro '..macCurrent..' At Layout '..layoutView..'/x='..posX..' /y='..posY) 
 
-	--increment macro counter
+    --increment macro counter
   macCurrent = macCurrent + 1;
 end
 
