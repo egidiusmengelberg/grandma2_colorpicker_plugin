@@ -4,7 +4,7 @@ A LUA plugin to automatically create a color picker layout view.
 I also added a function to create High and Low FX presets for use in a effect engine.
 This is the plugin called HighLowFX.lua.
 
-###Be sure to first run the colorpicker and then the HighLowFX plugin! 
+### Be sure to first run the colorpicker and then the HighLowFX plugin! 
 I have not tested it the otherway around.  
 But I will try to merge the two plugins before the start of 2019
 
