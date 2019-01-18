@@ -112,7 +112,7 @@ local str_storeOpt = ' /use=active /so=Prog /nc'
 for t=1,2 do
   for c = 1, #cNum do
     local execCurrent = tostring(startingPg..'.'..faderCurrent)
-    local copyCommand = 'Copy Preset 4.'..c..' At Preset 4.'..LowFXPreset
+    local copyCommand = ''
     cmd('ClearAll')
     cmd('Store Sequence '..seqCurrent..' Cue '..c..' '..str_storeOpt) --store to sequence and cue
 
@@ -122,18 +122,18 @@ for t=1,2 do
 
     if t == 1 then
       cmd('Label Sequence '..seqCurrent..' \"Low FX\"'); --label sequence
-      macStore(macCurrent, 'High FX '..cName[c]) --create macro; label with color name
+      macStore(macCurrent, 'Low FX '..cName[c]) --create macro; label with color name
       macLine(macCurrent, 1, 'Goto Executor '..execCurrent..' Cue '..c)
       macLine(macCurrent, 2, 'Off Macro '..macStart+(#cNum*(t-1))..' Thru '..(macStart-1)+(#cNum*(t-1))+#cNum..' - '..macCurrent)
-      local copyCommand = 'Copy Preset 4.'..c..' At Preset 4.'..LowFXPreset
+      copyCommand = 'Copy Preset 4.'..c..' At Preset 4.'..LowFXPreset
     end
 
     if t == 2 then
       cmd('Label Sequence '..seqCurrent..' \"High FX\"'); --label sequence
-      macStore(macCurrent, 'Low FX '..cName[c]) --create macro; label with color name
+      macStore(macCurrent, 'High FX '..cName[c]) --create macro; label with color name
       macLine(macCurrent, 1, 'Goto Executor '..execCurrent..' Cue '..c)
       macLine(macCurrent, 2, 'Off Macro '..macStart+(#cNum*(t-1))..' Thru '..(macStart-1)+(#cNum*(t-1))+#cNum..' - '..macCurrent)
-      local copyCommand = 'Copy Preset 4.'..c..' At Preset 4.'..HighFXPreset
+      copyCommand = 'Copy Preset 4.'..c..' At Preset 4.'..HighFXPreset
     end
 
     local imageCommand1 = 'Copy Image '..unfilledImages[1]..' Thru '..unfilledImages[#cNum]..' At '..imageGrid[t][1]..' /m /nc'
