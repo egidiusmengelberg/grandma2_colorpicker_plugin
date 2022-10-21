@@ -1,8 +1,20 @@
 --[[
 Plugin written by: Egidius Mengelberg
+Plugin extended by: Leon Reucher (Ultimate Technology Solutions GmbH)
 
 This plugin is based on a plugin originally written by Jason Giaffo.
 It is heavily modified to be used as a color picker plugin. (Like Christian Jackson uses)
+
+Fork by Leon Reucher:
+
+Added the automated creation of the ready to use layout view with assigned images
+so there is no need to assign the specific images from the pool to the layout view items.
+
+- Added the labels of the groups to the layout view
+
+- Also fixed a bug with the "All Groups" image buttons, a wrong image source was used.
+
+
 
 --]]
 
@@ -18,6 +30,7 @@ local startingPg = 500
 local startingFader = 101
 --layout view config
 local layoutView = 1
+local layoutName = 'Colorpicker'
 local spacing = 0.1
 --image config
 local imgStart = 352
@@ -50,6 +63,7 @@ local pNum = {1,2,3,4,5,6,7,8,9,10,11,12}
 -- Colors from Swatch Book.
 local colSwatchBook = {'White', 'Red', 'Orange', 'Yellow', 'Green', 'Sea Green', 'Cyan', 'Lavender', 'Blue', 'Violet', 'Magenta', 'Pink'}
 
+local xmlfile
 -- End of config
 
 --From this point forward the plugin will actually do stuff
@@ -91,10 +105,9 @@ function advanceSpace(poolType, start, length)
   while checkSpace(poolType, finalStart, length) == false do
     finalStart = finalStart + 1
   end
-  
+
   return finalStart
 end
-
 
 local function advanceExec(page, exec, ct, minExec)
   --check each spot from start until end
@@ -102,9 +115,9 @@ local function advanceExec(page, exec, ct, minExec)
   --if the executor number hits 100, 199, or 210, and there still are more to go, then
   --the count restarts on the next page at the minimum executor number.
   --if there is not enough space to pull this off on any page, the function returns nil and an error message
-  local function getExecutorStatus(page, executor)  
+  local function getExecutorStatus(page, executor)
     local slotStatus = gma.show.getobj.handle('Executor '..page..'.'..executor)
-        
+
     if slotStatus then
     if getHandle('Executor '..page..'.'..executor..' Cue') then
       local c = getClass('Executor '..page..'.'..executor..' Cue')
@@ -120,38 +133,38 @@ local function advanceExec(page, exec, ct, minExec)
     return 'EMPTY'
     end
   end
-  
+
   local function checkPass(exec, ct)
     local limits = {100, 199, 210}
   local status_pass = true
   for i = 1, #limits do
-    if exec <= limits[i] and (exec+ct-1) > limits[i] then 
-    status_pass = false 
+    if exec <= limits[i] and (exec+ct-1) > limits[i] then
+    status_pass = false
     break
-    end   
+    end
   end
-  
+
   return status_pass
   end
-  
+
   local function checkNum(num)
     local limits = {100, 199, 210}
   local status_pass = true
   for i = 1, #limits do
     if num == limits[i] then status_pass = false; break; end;
   end
-  
+
   return status_pass
   end
 
   local error_msg = 'Error: minExec set too high'
-  
+
   if not minExec then minExec = 1 end
   if not ct then ct = 1 end
-  
+
   local addPage = true
   if not checkPass(minExec, ct) then addPage = false end
-  
+
   local pageCurrent = page
   local execCurrent = exec
   local pass = false
@@ -185,7 +198,7 @@ local function advanceExec(page, exec, ct, minExec)
     end
   end
   end
-  
+
   return pageCurrent, execCurrent
 end
 
@@ -198,14 +211,14 @@ end
 
 
 --Function to add a line to a macro
-function macLine (macroNum, lineNum, command, wait) 
+function macLine (macroNum, lineNum, command, wait)
   cmd('Store Macro 1.'..macroNum..'.'..lineNum)
   cmd('Assign Macro 1.'..macroNum..'.'..lineNum..'/cmd = \"'..command..'\"')
   if wait then cmd('Assign Macro 1.'..macroNum..'.'..lineNum..'/wait = \"'..wait..'\"') end
 end
 
 
-function match(a, b)            
+function match(a, b)
   if a == b then return true
   elseif type(a) == 'string' and type(b) == 'string' then
     if string.find(string.lower(a), string.lower(b)) ~= nil or
@@ -229,11 +242,54 @@ function table.find(t, target, i, j)
   return nil
 end
 
+
+function printNewButton(x, y, imgName, imgIndex, macroIndex, label)
+  xmlfile:write('\t\t\t\t<LayoutCObject font_size="Small" center_x="'..x..'" center_y="'..y..'" size_h="1" size_w="1" background_color="3c3c3c" border_color="5a5a5a" icon="None" show_dimmer_bar="Off" show_dimmer_value="Off" function_type="Simple" select_group="1">', "\n")
+  xmlfile:write('\t\t\t\t\t<image name="'..imgName..'">', "\n")
+  xmlfile:write('\t\t\t\t\t\t<No>8</No>', "\n")
+  xmlfile:write('\t\t\t\t\t\t<No>'..imgIndex..'</No>', "\n")
+  xmlfile:write('\t\t\t\t\t</image>', "\n")
+  xmlfile:write('\t\t\t\t\t<CObject name="'..label..'">', "\n")
+  xmlfile:write('\t\t\t\t\t\t<No>13</No>', "\n")
+  xmlfile:write('\t\t\t\t\t\t<No>1</No>', "\n")
+  xmlfile:write('\t\t\t\t\t\t<No>'..macroIndex..'</No>', "\n")
+  xmlfile:write('\t\t\t\t\t</CObject>', "\n")
+  xmlfile:write('\t\t\t\t</LayoutCObject>', "\n")
+end
+
+function printNewGroupLabel(x, y, groupIndex, label)
+  xmlfile:write('\t\t\t\t<LayoutCObject font_size="Small" center_x="'..x..'" center_y="'..y..'" size_h="1" size_w="1" background_color="3c3c3c" border_color="5a5a5a" icon="None" icon="None" show_id="1" show_name="1" show_type="1" function_type="Pool icon" select_group="1">', "\n")
+  xmlfile:write('\t\t\t\t\t<image />', "\n")
+  xmlfile:write('\t\t\t\t\t<CObject name="'..label..'">', "\n")
+  xmlfile:write('\t\t\t\t\t\t<No>22</No>', "\n")
+  xmlfile:write('\t\t\t\t\t\t<No>1</No>', "\n")
+  xmlfile:write('\t\t\t\t\t\t<No>'..groupIndex..'</No>', "\n")
+  xmlfile:write('\t\t\t\t\t</CObject>', "\n")
+  xmlfile:write('\t\t\t\t</LayoutCObject>', "\n")
+end
+
+function printXmlStart(index, name)
+  xmlfile:write('<?xml version="1.0" encoding="utf-8"?>', "\n")
+  xmlfile:write('<MA xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.malighting.de/grandma2/xml/MA" xsi:schemaLocation="http://schemas.malighting.de/grandma2/xml/MA http://schemas.malighting.de/grandma2/xml/3.9.60/MA.xsd" major_vers="3" minor_vers="9" stream_vers="60">', "\n")
+  xmlfile:write('\t<Info datetime="2022-10-20T14:34:20" showfile="uts-busk-template-v2" />', "\n")
+  xmlfile:write('\t<Group index="'..index..'" name="'..name..'">', "\n")
+  xmlfile:write('\t\t<LayoutData index="0" marker_visible="true" background_color="000000" visible_grid_h="1" visible_grid_w="0" snap_grid_h="0.5" snap_grid_w="0.5" default_gauge="Filled &amp; Symbol" subfixture_view_mode="DMX Layer">', "\n")
+  xmlfile:write('\t\t\t<CObjects>', "\n")
+end
+
+function printXmlEnd()
+  xmlfile:write('\t\t\t</CObjects>', "\n")
+  xmlfile:write('\t\t</LayoutData>', "\n")
+  xmlfile:write('\t</Group>', "\n")
+  xmlfile:write('</MA>', "\n")
+end
+
 return function()
 -----------------------------------------------------------------
 --------------------- START OF PLUGIN ---------------------------
 -----------------------------------------------------------------
-
+xmlfile = io.open("importexport/uts_colorpicker.xml", "w")
+printXmlStart(layoutView, layoutName)
 local pName = {}
 
 gma.feedback('Starting to add items to preset list')
@@ -322,12 +378,12 @@ local posY = 0
 
 --main loop for creating sequences and referencing macros
 for g = 1, #grpNum do
-  local macGroup = {} 
+  local macGroup = {}
   macGroup.start = macStart + (#pNum * (g-1))
   macGroup.final = macStart + (#pNum * g) - 1
-  
+
   local execCurrent = tostring(startingPg..'.'..faderCurrent)
-  
+
   for p = 1, #pNum do
       --create commands for image support
       imageCommand = 'Copy Image '..unfilledImages[1]..' Thru '..unfilledImages[#pNum]..' At '..imageGrid[g][1]..' /m; Copy Image '..filledImages[p]..' At '..imageGrid[g][p]..' /m'
@@ -339,38 +395,40 @@ for g = 1, #grpNum do
       --if it is the first cue, assign it to an executor
         if p == 1 then
         cmd('Assign Sequence '..seqCurrent..' At Executor '..execCurrent) --assign sequence to executor
-        end 
+        end
 
         --label the sequence and cues
-      cmd('Label Sequence '..seqCurrent..' \"'..grpName[g]..' color\"'); 
-      cmd('Label Sequence '..seqCurrent..' Cue '..p..' \"'..grpName[g]..' '..pName[p]..'\"');  
+      cmd('Label Sequence '..seqCurrent..' \"'..grpName[g]..' color\"');
+      cmd('Label Sequence '..seqCurrent..' Cue '..p..' \"'..grpName[g]..' '..pName[p]..'\"');
 
       --create macro and label it
-      macStore(macCurrent, grpName[g]..' '..pName[p]) 
+      macStore(macCurrent, grpName[g]..' '..pName[p])
       macLine(macCurrent, 1, 'Goto Executor '..execCurrent..' Cue '..p)
       macLine(macCurrent, 2, 'Off Macro '..macGroup.start..' Thru '..macGroup.final..' - '..macCurrent)
 
-      
+
       --change the appearance of the macro
       cmd('Appearance Macro '..macCurrent..' /color='..'"'..colSwatchBook[p]..'"')
-      
+
       --clear your programmer
-      cmd('ClearAll'); 
+      cmd('ClearAll');
 
       --calculate positions for layout pool
       posX = (p + 0.5) * (1 + spacing)
       posY = (g + 0.5) * (1 + spacing)
 
       --add macro to layout pool
-      cmd('Assign Macro '..macCurrent..' At Layout '..layoutView..'/x='..posX..' /y='..posY) 
-      
+      printNewButton(posX, posY, "Image Name", imageGrid[g][p], macCurrent, "Label")
+
       --increment macro counter
       macCurrent = macCurrent + 1
       --To use less processing power
       gma.sleep(0.05)
-  end  
+  end
+  --Add group symbol to layout view here
+  printNewGroupLabel(0, posY, grpNum[g], grpName[g])
   --move to next sequence and fader number
-  seqCurrent  = seqCurrent + 1 
+  seqCurrent  = seqCurrent + 1
   faderCurrent  = faderCurrent + 1
 end
 
@@ -388,7 +446,7 @@ for p = 1, #pNum do
   cmd('Store Macro 1.'..macCurrent..'.3')
   cmd('Label Macro '..macCurrent..' \"All '..pName[p]..'\"')
   local t = 'Macro '..(macStart+p-1) --command for starting all macros
-  
+
   --adding macro with same color to all command
   if #grpNum > 1 then
     local index = p - 1
@@ -397,9 +455,9 @@ for p = 1, #pNum do
       t = t..' + '..(macStart + index)
       end
   end
-  
+
   cmd('Assign Macro 1.'..macCurrent..'.1 /cmd = \"'..t..'\"')
-  cmd('Assign Macro 1.'..macCurrent..'.2 /cmd = \"Copy Image '..allImageGrid[1]..' Thru '..allImageGrid[#pNum]..' At '..allImageGrid[1]..' /m\"')
+  cmd('Assign Macro 1.'..macCurrent..'.2 /cmd = \"Copy Image '..unfilledImages[1]..' Thru '..unfilledImages[#pNum]..' At '..allImageGrid[1]..' /m\"')
   cmd('Assign Macro 1.'..macCurrent..'.3 /cmd = \"Copy Image '..filledImages[p]..' At '..allImageGrid[p]..' /m\"')
 
   -- change the appearance of the macro
@@ -410,7 +468,7 @@ for p = 1, #pNum do
     posY = (#grpNum + 1.5) * (1 + spacing)
 
     --add macro to layout pool
-    cmd('Assign Macro '..macCurrent..' At Layout '..layoutView..'/x='..posX..' /y='..posY) 
+    printNewButton(posX, posY, "Image Name", allImageGrid[p], macCurrent, "Label")
 
     --increment macro counter
   macCurrent = macCurrent + 1;
@@ -441,6 +499,12 @@ macLine(macCurrent, 5, 'Delete Macro '..macStart..' Thru '..macCurrent..' /nc')
 
 --lock uninstall macro
 cmd('Macro '..mac_sys_start)
+
+--close xml file
+printXmlEnd()
+xmlfile:close()
+
+cmd('Import uts_colorpicker.xml At Layout '..layoutView ..' /nc')
 
 ::EOF::
 end
