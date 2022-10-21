@@ -364,12 +364,6 @@ local faderCurrent = startingFader
 --clear the programmer
 cmd('ClearAll')
 
---create layout view
-cmd('Store Layout '..layoutView..' /o /nc')
-cmd('Assign Layout '..layoutView..' /gridX=0')
-cmd('Label Layout '..layoutView..' \"Color Picker\"')
-cmd('ClearAll')
-
 --initiate some variables
 local str_storeOpt = ' /use=active /so=Prog /nc'
 local imageCommand = ''
