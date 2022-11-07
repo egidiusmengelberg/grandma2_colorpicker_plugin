@@ -1,12 +1,23 @@
 # grandma2_colorpicker_plugin
 
+## There are two versions of this plugin. Please read below for more info.
+
+[leonreucher251](https://github.com/leonreucher251) made a fork that automaticaly creates the layout pool and assigns images.
+This is very easy but the HighLowFX plugin does not work anymore in his version. So there are two options:
+
+- [Original version](https://github.com/egidiusmengelberg/grandma2_colorpicker_plugin): ColorPicker and HighLowFX plugin (you need to mannauly assign the images to the layoutview items)
+- [leonreucher251 version](https://github.com/egidiusmengelberg/grandma2_colorpicker_plugin/tree/automated_layout_view): Auto layoutview creation but without HighLowFX plugin.
+
+***
+
+## Original version readme
+
 A LUA plugin to automatically create a color picker layout view.
 I also added a function to create High and Low FX presets for use in a effect engine.
 This is the plugin called HighLowFX.lua.
 
 ### Be sure to first run the colorpicker and then the HighLowFX plugin! 
-I have not tested it the otherway around.  
-But I will try to merge the two plugins before the start of 2019
+I have not tested it the otherway around.
 
 ## Configuration
 In the ColorPicker.lua file, you will find the config section at the top.
@@ -43,10 +54,11 @@ The images folder contains all the images you can use in this plugin.
 
 ## Further development
 
-Because I am a very busy high school student I haven't got much time to develop this plugin. I will put in time when I can! 
+Because I am a very busy student I haven't got much time to develop this plugin. I will put in time when I can! 
 
 ### Next Features
 
-1. Automatically change the icon of each macro in the layout view --> This is impossible because MA lighting does not support this.
+1. Automatically change the icon of each macro in the layout view [See leonreucher251 version](https://github.com/egidiusmengelberg/grandma2_colorpicker_plugin/tree/automated_layout_view) 
 2. Making sure it works with different colors.
 3. An overall code cleanup
+4. Merge ColorPicker and HighLowFX and use leonreucher251 method to create layoutview buttons 
